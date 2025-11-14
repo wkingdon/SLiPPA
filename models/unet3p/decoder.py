@@ -26,7 +26,7 @@ class DownBlock(nn.Module):
             out_channels,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
         self.attention1 = md.Attention(attention_type, in_channels=out_channels)
 
@@ -51,7 +51,7 @@ class ConstBlock(nn.Module):
             out_channels,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
 
     def forward(self, x):
@@ -75,7 +75,7 @@ class UpBlock(nn.Module):
             out_channels,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
         self.attention1 = md.Attention(attention_type, in_channels=out_channels)
 
@@ -132,7 +132,7 @@ class DecoderBlock(nn.Module):
             self.UpChannel,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
         self.attention_cat = md.Attention(attention_type, in_channels=self.UpChannel)
 
@@ -157,14 +157,14 @@ class CenterBlock(nn.Sequential):
             out_channels,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
         conv2 = md.Conv2dReLU(
             out_channels,
             out_channels,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
         super().__init__(conv1, conv2)
 

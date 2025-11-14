@@ -137,7 +137,7 @@ class DecoderBlock(nn.Module):
             out_channels,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
         self.attention1 = md.Attention(attention_type, in_channels=in_channels + skip_channels)
         self.conv2 = PreActivatedConv2dReLU(
@@ -145,7 +145,7 @@ class DecoderBlock(nn.Module):
             out_channels,
             kernel_size=3,
             padding=1,
-            use_batchnorm=use_batchnorm,
+            # use_batchnorm=use_batchnorm,
         )
         self.attention2 = md.Attention(attention_type, in_channels=out_channels)
         self.identity_conv = nn.Conv2d(in_channels + skip_channels, out_channels, kernel_size=1)

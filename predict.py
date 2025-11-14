@@ -50,15 +50,18 @@ if __name__ == "__main__":
     )
 
     MODELS = {
-        "unet": Unet(classes=4, encoder_weights="imagenet" if not args.no_pretrain else None),
-        "unetpp": UnetPlusPlus(classes=4, encoder_weights="imagenet" if not args.no_pretrain else None),
-        "unet3p": Unet3Plus(classes=4, encoder_weights="imagenet" if not args.no_pretrain else None),
-        "resunetpp": ResUnetPlusPlus(classes=4, encoder_weights="imagenet" if not args.no_pretrain else None),
-        "deeplabv3p": DeepLabV3Plus(classes=4, encoder_weights="imagenet" if not args.no_pretrain else None)
+        "unet": Unet(classes=4, encoder_weights="imagenet" ),
+        "unetpp": UnetPlusPlus(classes=4, encoder_weights="imagenet" ),
+        "unet3p": Unet3Plus(classes=4, encoder_weights="imagenet" ),
+        "resunetpp": ResUnetPlusPlus(classes=4, encoder_weights="imagenet" ),
+        "deeplabv3p": DeepLabV3Plus(classes=4, encoder_weights="imagenet" )
     }
 
     model = MODELS[args.arch]
-    device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+    try:
+        device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+    except(AttributeError):
+        device = "cpu"
     model.to(device)
     model.load_state_dict(torch.load(args.model, weights_only=True))
     model.eval()

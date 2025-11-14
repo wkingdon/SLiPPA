@@ -130,7 +130,12 @@ if __name__ == "__main__":
     }
 
     model = MODELS[args.arch]
-    device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+    
+    try:
+        device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+    except(AttributeError):
+        device = "cpu"
+    #  device = "cpu"
     model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)

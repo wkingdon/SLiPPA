@@ -48,7 +48,7 @@ def prepare_P2ILF(in_path, out_path, is_test):
 def prepare_L3D(in_path, out_path, subset):
     with py7zr.SevenZipFile(in_path, 'r') as archive:
         archive.extractall(path=Path(out_path / "data" / "L3D"))
-        name = subset.split('_')[1].capitalize()
+        name = subset.split('_')[0].capitalize()
         copy_folder(Path(out_path / "data" / "L3D" / name), Path(out_path / "data" / "L3D" / name.lower()))
         remove_folder(Path(out_path / "data" / "L3D" / name))
 

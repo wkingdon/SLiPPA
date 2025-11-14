@@ -32,7 +32,7 @@ class L3D(Dataset):
         f = open(self.data[index]["labels"], 'r')
         mask_data = json.load(f)
         f.close()
-        mask = generate_L3D_mask()
+        mask = generate_L3D_mask(mask_data)
 
         sample = (image, mask)
         if self.transform:
