@@ -12,7 +12,7 @@ from segmentation_models_pytorch import Unet, UnetPlusPlus, DeepLabV3Plus
 
 from utils.transform import Resize, ToTensor
 from utils.results import write_csv, scores_per_landmark
-from utils.mask import generate_P2ILF_mask, resize_mask
+from utils.mask import P2ILF_labels_to_mask, generate_P2ILF_mask, resize_mask
 from models.unet3p.model import Unet3Plus
 from models.resunetpp.model import ResUnetPlusPlus
 from utils.metric import precision, dice_score, francois_distance, cl_dice
@@ -29,23 +29,27 @@ def generate_predictions(model, device, weights, samples):
     ])
     
     model.to(device)
-    model.load_state_dict(torch.load(weights, weights_only=True))
+    if(device == "cpu"):
+        model.load_state_dict(torch.load(weights, weights_only=True, map_location=torch.device('cpu')))
+    else:
+        model.load_state_dict(torch.load(weights, weights_only=True))
+
     model.eval()
 
     results = []
     times = []
-    for sample in tqdm(samples):
+    for sample in tqdm.tqdm(samples):
         timings = []
         _, image = sample
         x, y = transform(image)
         with torch.no_grad():
             timings.append(time_ns()) # Before prediction
             prediction = model(x.to(device).unsqueeze(0))
-            timings.append(time_ns) # After prediction
+            timings.append(time_ns()) # After prediction
 
             mask = torch.argmax(prediction, dim=1).squeeze(0).cpu()
         timings.append(time_ns()) # Before processing
-        mask = process_mask(image, mask)
+        mask = process_mask(x.numpy(), mask.numpy())
         timings.append(time_ns()) # After processing
         
         results.append(mask)
@@ -63,16 +67,25 @@ def load_P2ILF_test_samples():
     """
     Loads sample from the P2ILF test set into memory.
     """
+    mapping = {
+        "Silhouette": 1,
+        "Ridge": 2,
+        "Ligament": 3
+    }
+
     samples = []
     dir_path = Path(os.path.dirname(os.path.realpath(__file__)))
-    test_path = Path(dir_path / "data" / "P2ILF" / "test")
+    test_path = Path(dir_path / "data" / "P2ILF" / "val")
 
     for patient in test_path.iterdir():
         for p in Path(patient / "2D-3D_contours").iterdir():
             image = p.parents[1] / "images" / f"{p.name[:-4]}.jpg"
             image = cv.imread(image)
             image = cv.convertScaleAbs(image, alpha=1.15, beta=0)
-            mask = generate_P2ILF_mask(p)
+
+            # print(p)
+
+            mask = P2ILF_labels_to_mask(p, mapping)
             samples.append([p.name[:-4], (image, mask)])
     return samples
 
@@ -85,7 +98,7 @@ def evaluate_results(samples, results):
     }
     names = []
 
-    for i, pred in enumerate(results):
+    for i, pred in enumerate(tqdm.tqdm(results)):
         name = samples[i][0]
         names.append(name)
         pred = resize_mask(pred, 1080, 1920)

@@ -54,6 +54,25 @@ def generate_P2ILF_mask(path):
         cv.polylines(mask, pts, False, colour, 12)
     return mask
 
+def P2ILF_labels_to_mask(labels, mapping):
+    """
+    Converts labels from P2ILF dataset into a mask
+    """
+    tree = ET.parse(labels)
+    root = tree.getroot()
+    mask = np.zeros((1080, 1920), np.uint8) # All images must be 1920x1080
+    for contour in root.findall("contour"):
+        label = mapping.get(contour.find("contourType").text.strip(), 0)
+        x_str = contour.find("imagePoints").find('x').text
+        y_str = contour.find("imagePoints").find('y').text
+        x_pts = [ int(float(x.strip())) for x in x_str.split(',') if x.strip() ]
+        y_pts = [ int(float(y.strip())) for y in y_str.split(',') if y.strip() ]
+        if len(x_pts) != len(y_pts) or len(x_pts) == 0:
+            continue
+        pts = np.array([[ (x, y) for x, y in zip(x_pts, y_pts) ]], np.int32)
+        cv.polylines(mask, pts, False, label, 12)
+    return mask
+
 def resize_mask(mask, height, width):
     """
     Resizes mask using OpenCV.
