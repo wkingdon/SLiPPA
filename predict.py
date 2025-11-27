@@ -79,7 +79,7 @@ if __name__ == "__main__":
             with torch.no_grad():
                 prediction = model(x.to(device).unsqueeze(0))
                 mask = torch.argmax(prediction, dim=1).squeeze(0).cpu()
-                # mask = process_mask(image, mask)
+                mask = process_mask(x.numpy(), mask.numpy())
                 out = image_mask_overlay((x, mask))
 
                 cv.imshow("Prediction", out)

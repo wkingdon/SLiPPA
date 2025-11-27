@@ -27,7 +27,7 @@ def cull_ligament(mask):
         u_left = u_coords[np.argmin(u_coords[:, 1])]
         u_right = u_coords[np.argmax(u_coords[:, 1])]
         u_top = u_coords[np.argmin(u_coords[:, 0])]
-        u_bottom = u_coords[np.argmax(u_coords[:, 10])]
+        u_bottom = u_coords[np.argmax(u_coords[:, 0])] # change to 0 based on old codebase
 
         l_mask[:, :u_left[1]] = False
         l_mask[:, u_right[1] + 1:] = False
@@ -140,8 +140,10 @@ def process_mask(image, mask):
     mask = cull_outside_camera(image, mask)
     mask = cull_ligament(mask)
     mask = connect_clusters(mask, 15)
-    mask = thinning(mask)
-    mask = smoothing(mask)
-    mask = redilate(mask)
-    mask = thinning(mask)
-    mask = redilate(mask)
+    # mask = thinning(mask) Commented out in original source code
+    # mask = smoothing(mask)
+    # mask = redilate(mask)
+    # mask = thinning(mask)
+    # mask = redilate(mask)
+
+    return mask

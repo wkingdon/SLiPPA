@@ -65,7 +65,9 @@ class P2ILF(Dataset):
         image = cv.imread(self.data[index]["image"])
         image = cv.convertScaleAbs(image, alpha=1.2, beta=10) # Increase visibility
 
-        mask = generate_P2ILF_mask()
+        mask_data_path = self.data[index]["labels"]
+
+        mask = generate_P2ILF_mask(mask_data_path)
 
         sample = (image, mask)
         if self.transform:
