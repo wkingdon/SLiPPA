@@ -70,11 +70,9 @@ if __name__ == "__main__":
         print("File not found at given path.")
         sys.exit(1)
     calc_hash = calculate_MD5(location)
-    print(calc_hash)
-    exit(0)
-    # if calc_hash != hashes[args.dataset]:
-    #     print("Unexpected hash for dataset.")
-    #     sys.exit(1)
+    if calc_hash != hashes[args.dataset]:
+        print("Unexpected hash for dataset.")
+        sys.exit(1)
     
     # Source: Russel Dias/StackOverflow. 2011. Find the current directory and file's directory.
     dir_path = Path(os.path.dirname(os.path.realpath(__file__)))
