@@ -60,10 +60,15 @@ if __name__ == "__main__":
     model = MODELS[args.arch]
     try:
         device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-    except(AttributeError):
+    except Exception:
         device = "cpu"
     model.to(device)
-    model.load_state_dict(torch.load(args.model, weights_only=True))
+    if(device == "cpu"):
+        model.load_state_dict(torch.load(args.model, weights_only=True, map_location=torch.device('cpu')))
+    else:
+        model.load_state_dict(torch.load(args.model, weights_only=True))
+
+    
     model.eval()
 
     while True:
@@ -74,7 +79,7 @@ if __name__ == "__main__":
             with torch.no_grad():
                 prediction = model(x.to(device).unsqueeze(0))
                 mask = torch.argmax(prediction, dim=1).squeeze(0).cpu()
-                mask = process_mask(image, mask)
+                # mask = process_mask(image, mask)
                 out = image_mask_overlay((x, mask))
 
                 cv.imshow("Prediction", out)

@@ -8,7 +8,7 @@ from pathlib import Path
 from utils.preparation import calculate_MD5, remove_folder, copy_folder
 
 hashes = {
-    "P2ILF_train": "2d84a80ba4aeb8ff8de5c1c59aca3b50",
+    "P2ILF_train": "44556fd9e1d855a98bedcba1acfd9b6c",
     "P2ILF_test": "507759d5a10005e4102514a5edc1e9a5",
     "L3D_train": "dca2aab8184331fc8de832c7ce5beec4",
     "L3D_test": "d8ae3262a78fde371b007ac61721b68c",
@@ -37,7 +37,7 @@ def prepare_P2ILF(in_path, out_path, is_test):
         new_path = Path(out_path / "data" / "P2ILF")
         remove_folder(Path(new_path / "__MACOSX"))
         Path.mkdir(Path(new_path / "val"))
-        new_path = Path(new_path / "P2ILF_MICCAI2022_Edition1")
+        new_path = Path(new_path / "P2ILF_MICCAI2022_Edition1_trainingData")
         copy_folder(new_path, Path(out_path / "data" / "P2ILF" / "train"))
         copy_folder(Path(new_path / "patient1"), Path(out_path / "data" / "P2ILF" / "val" / "patient1"))
         copy_folder(Path(new_path / "patient2"), Path(out_path / "data" / "P2ILF" / "val" / "patient2"))
@@ -70,9 +70,11 @@ if __name__ == "__main__":
         print("File not found at given path.")
         sys.exit(1)
     calc_hash = calculate_MD5(location)
-    if calc_hash != hashes[args.dataset]:
-        print("Unexpected hash for dataset.")
-        sys.exit(1)
+    print(calc_hash)
+    exit(0)
+    # if calc_hash != hashes[args.dataset]:
+    #     print("Unexpected hash for dataset.")
+    #     sys.exit(1)
     
     # Source: Russel Dias/StackOverflow. 2011. Find the current directory and file's directory.
     dir_path = Path(os.path.dirname(os.path.realpath(__file__)))

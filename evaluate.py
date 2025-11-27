@@ -123,7 +123,7 @@ if __name__ == "__main__":
     model = MODELS[args.arch]
     try:
         device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-    except(AttributeError):
+    except Exception:
         device = "cpu"
     print("Generating predictions...")
     results, _, _ = generate_predictions(model, device, args.path, samples)

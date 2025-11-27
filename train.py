@@ -133,7 +133,7 @@ if __name__ == "__main__":
     
     try:
         device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-    except(AttributeError):
+    except Exception:
         device = "cpu"
     #  device = "cpu"
     model.to(device)

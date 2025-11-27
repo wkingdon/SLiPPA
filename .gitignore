@@ -3,3 +3,6 @@ data/
 output/
 __pycache__/
 results/
+
+/imported
+TODO.md
